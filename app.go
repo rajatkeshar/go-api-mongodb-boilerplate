@@ -8,6 +8,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/handlers"
+	"github.com/bitly/go-simplejson"
 	. "github.com/GORest-API-MongoDB/dao"
 	"github.com/GORest-API-MongoDB/models"
 	. "github.com/GORest-API-MongoDB/config"
@@ -19,11 +20,11 @@ var dao = UsersDAO{}
 
 //Home Page
 func homePage(w http.ResponseWriter, r *http.Request) {
-		fmt.Println(w.Header().Get("_id"))
-		respondWithJson(w, http.StatusOK, "Hello World")
-    //fmt.Fprintf(w, "Hello World")
-    fmt.Println("Endpoint Hit: homePage")
-
+		jsonBuilder := simplejson.New()
+		jsonBuilder.Set("_id", w.Header().Get("_id"))
+		jsonBuilder.Set("firstname", w.Header().Get("firstname"))
+		jsonBuilder.Set("lastname", w.Header().Get("lastname"))
+		respondWithJson(w, http.StatusOK, "Home Page!", jsonBuilder)
 }
 
 // GET list of users
@@ -33,7 +34,7 @@ func AllUsersEndPoint(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJson(w, http.StatusOK, users)
+	respondWithJson(w, http.StatusOK, "Users Data", users)
 }
 
 // GET a users by its ID
@@ -44,7 +45,7 @@ func FindUserEndpoint(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
 		return
 	}
-	respondWithJson(w, http.StatusOK, user)
+	respondWithJson(w, http.StatusOK, "User data", user)
 }
 
 // POST a new user
@@ -60,7 +61,7 @@ func CreateUserEndPoint(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJson(w, http.StatusCreated, user)
+	respondWithJson(w, http.StatusCreated, "User created successfully", user)
 }
 
 // PUT update an existing user
@@ -77,7 +78,7 @@ func UpdateUserEndPoint(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJson(w, http.StatusOK, map[string]string{"result": "success"})
+	respondWithJson(w, http.StatusOK, "User detail updated successfully", "")
 }
 
 // DELETE an existing user
@@ -92,7 +93,7 @@ func DeleteUserEndPoint(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJson(w, http.StatusOK, map[string]string{"result": "success"})
+	respondWithJson(w, http.StatusOK, "User deleted successfully", "")
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -109,18 +110,17 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	token, _ := auth.GenerateJWT(user)
 	w.Header().Set("Token", token)
-	respondWithJson(w, http.StatusOK, user)
+	respondWithJson(w, http.StatusOK, "Login Success!", user)
 }
 
 func respondWithError(w http.ResponseWriter, code int, msg string) {
-	respondWithJson(w, code, map[string]string{"error": msg})
+	w.WriteHeader(code)
+	json.NewEncoder(w).Encode(bson.M{"code": code, "success": false, "msg": msg, "data": nil})
 }
 
-func respondWithJson(w http.ResponseWriter, code int, payload interface{}) {
-	response, _ := json.Marshal(payload)
-	w.Header().Set("Content-Type", "application/json")
+func respondWithJson(w http.ResponseWriter, code int, msg string, payload interface{}) {
 	w.WriteHeader(code)
-	w.Write(response)
+	json.NewEncoder(w).Encode(bson.M{"code": code, "success": true, "msg": msg, "data": payload})
 }
 
 // Parse the configuration file 'config.toml', and establish a connection to DB
@@ -132,19 +132,39 @@ func init() {
 	dao.Connect()
 }
 
+func loggingMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        // Do stuff here
+        log.Println(r.RequestURI)
+        // Call the next handler, which can be another middleware in the chain, or the final handler.
+        next.ServeHTTP(w, r)
+    })
+}
+
+func commonMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "application/json")
+        next.ServeHTTP(w, r)
+    })
+}
+
 // Define HTTP request routes
 func main() {
 	routes := mux.NewRouter()
+
+	routes.Use(loggingMiddleware)
+	routes.Use(commonMiddleware)
+
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
-	routes.HandleFunc("/api/users", AllUsersEndPoint).Methods("GET")
-	routes.HandleFunc("/api/users", CreateUserEndPoint).Methods("POST")
-	routes.HandleFunc("/api/users/{id}", UpdateUserEndPoint).Methods("PUT")
-	routes.HandleFunc("/api/users", DeleteUserEndPoint).Methods("DELETE")
+	routes.Handle("/api/users", auth.IsAuthorized(AllUsersEndPoint)).Methods("GET")
+	routes.Handle("/api/users", auth.IsAuthorized(CreateUserEndPoint)).Methods("POST")
+	routes.Handle("/api/users/{id}", auth.IsAuthorized(UpdateUserEndPoint)).Methods("PUT")
+	routes.Handle("/api/users", auth.IsAuthorized(DeleteUserEndPoint)).Methods("DELETE")
 	routes.Handle("/api/users/{id}", auth.IsAuthorized(FindUserEndpoint)).Methods("GET")
-	routes.HandleFunc("/api/auth/login", Login).Methods("POST")
+	routes.Handle("/api/auth/login", auth.IsAuthorized(Login)).Methods("POST")
 	routes.Handle("/", auth.IsAuthorized(homePage)).Methods("GET")
 	fmt.Println("Server Is Running At 8080")
 	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(headersOk, originsOk, methodsOk)(routes)))

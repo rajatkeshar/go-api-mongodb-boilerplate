@@ -18,6 +18,12 @@ type UsersClaim struct {
   jwt.StandardClaims
 }
 
+type ResponseBody struct {
+    Success   bool    `json:"success"`
+    Msg       string  `json:"msg"`
+    Data      string  `json:"data"`
+}
+
 func GenerateJWT(user models.User) (string, error) {
     token := jwt.New(jwt.SigningMethodHS256)
 
@@ -40,19 +46,28 @@ func GenerateJWT(user models.User) (string, error) {
 }
 
 func IsAuthorized(endpoint func(http.ResponseWriter, *http.Request)) http.Handler {
+    var responseBody ResponseBody
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        //fmt.Println("r.URL: ", r.URL.Path)
+        if r.URL.Path == "/api/auth/login" {
+          endpoint(w, r)
+          return
+        }
         if r.Header["Token"] != nil {
             var usersClaim UsersClaim
             token, err := jwt.ParseWithClaims(r.Header["Token"][0], &usersClaim, func(token *jwt.Token) (interface{}, error) {
                 if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-                    return nil, fmt.Errorf("There was an error")
+                    responseBody.Success = false
+                    responseBody.Msg = "error in parsing claims"
+                    return nil, json.NewEncoder(w).Encode(responseBody)
                 }
                 return []byte(mySigningKey), nil
             })
 
             if err != nil {
-                //fmt.Fprintf(w, err.Error())
-                json.NewEncoder(w).Encode(err.Error())
+                responseBody.Success = false
+                responseBody.Msg = err.Error()
+                json.NewEncoder(w).Encode(responseBody)
             }
 
             if token.Valid {
@@ -63,7 +78,9 @@ func IsAuthorized(endpoint func(http.ResponseWriter, *http.Request)) http.Handle
                 endpoint(w, r)
             }
         } else {
-            fmt.Fprintf(w, "Not Authorized")
+            responseBody.Success = false
+            responseBody.Msg = "authorization error"
+            json.NewEncoder(w).Encode(responseBody)
         }
     })
 }
