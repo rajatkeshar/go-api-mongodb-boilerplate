@@ -9,7 +9,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	//"golang.org/x/crypto/bcrypt"
+	"golang.org/x/crypto/bcrypt"
 	"github.com/gorilla/handlers"
 	"github.com/bitly/go-simplejson"
 	. "github.com/GORest-API-MongoDB/dao"
@@ -60,18 +60,19 @@ func RegisterUserEndPoint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, _ = dao.FindByEmailId(user.Email, "")
-	fmt.Println("user_db: ", user)
-	// if user {
-	// 	respondWithError(w, http.StatusBadRequest, "User Already Exists!")
-	// 	return
-	// }
+	res, _ := dao.FindByEmailId(user.Email, user.Username)
+	if res.Email != "" {
+		respondWithError(w, http.StatusBadRequest, "User Already Exists!")
+		return
+	}
 
-	// user.ID = bson.NewObjectId()
-	// if err := dao.Insert(user); err != nil {
-	// 	respondWithError(w, http.StatusInternalServerError, err.Error())
-	// 	return
-	// }
+	user.ID = bson.NewObjectId()
+	hash, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 5)
+	user.Password = string(hash)
+	if err := dao.Insert(user); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 	respondWithJson(w, http.StatusCreated, "User created successfully", user)
 }
 
@@ -113,12 +114,18 @@ func LoginEndPoint(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
-
+	password := user.Password
 	user, err := dao.FindByEmailId(user.Email, user.Username)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
 		return
 	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid password!")
+		return
+	}
+
 	token, _ := auth.GenerateJWT(user)
 	w.Header().Set("Token", token)
 	respondWithJson(w, http.StatusOK, "Login Success!", user)
