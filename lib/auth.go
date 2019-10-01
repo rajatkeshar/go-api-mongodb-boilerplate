@@ -49,7 +49,7 @@ func IsAuthorized(endpoint func(http.ResponseWriter, *http.Request)) http.Handle
     var responseBody ResponseBody
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         //fmt.Println("r.URL: ", r.URL.Path)
-        if r.URL.Path == "/api/auth/login" {
+        if r.URL.Path == "/api/auth/login" || r.URL.Path == "/api/users/register" {
           endpoint(w, r)
           return
         }

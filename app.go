@@ -9,6 +9,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	//"golang.org/x/crypto/bcrypt"
 	"github.com/gorilla/handlers"
 	"github.com/bitly/go-simplejson"
 	. "github.com/GORest-API-MongoDB/dao"
@@ -51,18 +52,26 @@ func FindUserEndpoint(w http.ResponseWriter, r *http.Request) {
 }
 
 // POST a new user
-func CreateUserEndPoint(w http.ResponseWriter, r *http.Request) {
+func RegisterUserEndPoint(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
-	user.ID = bson.NewObjectId()
-	if err := dao.Insert(user); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+
+	user, _ = dao.FindByEmailId(user.Email, "")
+	fmt.Println("user_db: ", user)
+	// if user {
+	// 	respondWithError(w, http.StatusBadRequest, "User Already Exists!")
+	// 	return
+	// }
+
+	// user.ID = bson.NewObjectId()
+	// if err := dao.Insert(user); err != nil {
+	// 	respondWithError(w, http.StatusInternalServerError, err.Error())
+	// 	return
+	// }
 	respondWithJson(w, http.StatusCreated, "User created successfully", user)
 }
 
@@ -105,7 +114,7 @@ func LoginEndPoint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := dao.FindByEmailId(user.Email)
+	user, err := dao.FindByEmailId(user.Email, user.Username)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
 		return
@@ -140,6 +149,7 @@ func init() {
 	dao.Server = config.Server
 	dao.Database = config.Database
 	dao.Connect()
+	dao.PopulateIndex()
 }
 
 func loggingMiddleware(next http.Handler) http.Handler {
@@ -162,7 +172,7 @@ func commonMiddleware(next http.Handler) http.Handler {
 func main() {
 	routes := mux.NewRouter()
 	godotenv.Load()
-	
+
 	routes.Use(loggingMiddleware)
 	routes.Use(commonMiddleware)
 
@@ -171,7 +181,7 @@ func main() {
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
 	routes.Handle("/api/users", auth.IsAuthorized(AllUsersEndPoint)).Methods("GET")
-	routes.Handle("/api/users", auth.IsAuthorized(CreateUserEndPoint)).Methods("POST")
+	routes.Handle("/api/users/register", auth.IsAuthorized(RegisterUserEndPoint)).Methods("POST")
 	routes.Handle("/api/users/{id}", auth.IsAuthorized(UpdateUserEndPoint)).Methods("PUT")
 	routes.Handle("/api/users", auth.IsAuthorized(DeleteUserEndPoint)).Methods("DELETE")
 	routes.Handle("/api/users/{id}", auth.IsAuthorized(FindUserEndpoint)).Methods("GET")

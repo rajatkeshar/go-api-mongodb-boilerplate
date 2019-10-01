@@ -27,6 +27,17 @@ func (m *UsersDAO) Connect() {
 	db = session.DB(m.Database)
 }
 
+// Ensure Indexes on keys
+func (m *UsersDAO) PopulateIndex() {
+	for _, key := range []string{"username", "email"} {
+		index := mgo.Index{
+				Key:    []string{key},
+				Unique: true,
+		}
+		db.C(COLLECTION).EnsureIndex(index);
+	}
+}
+
 // Find list of users
 func (m *UsersDAO) FindAll() ([]models.User, error) {
 	var users []models.User
@@ -60,8 +71,8 @@ func (m *UsersDAO) Update(user models.User) error {
 }
 
 // Find a user by its email id
-func (m *UsersDAO) FindByEmailId(id string) (models.User, error) {
+func (m *UsersDAO) FindByEmailId(email string, username string) (models.User, error) {
 	var user models.User
-	err := db.C(COLLECTION).Find(bson.M{"email": id}).One(&user)
+	err := db.C(COLLECTION).Find(bson.M{"$or": []interface{}{bson.M{"email": email}, bson.M{"username": username}}}).One(&user)
 	return user, err
 }
