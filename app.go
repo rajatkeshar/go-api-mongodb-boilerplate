@@ -1,12 +1,14 @@
 package main
 
 import (
+	"os"
 	"fmt"
 	"log"
 	"net/http"
 	"encoding/json"
 	"gopkg.in/mgo.v2/bson"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"github.com/gorilla/handlers"
 	"github.com/bitly/go-simplejson"
 	. "github.com/GORest-API-MongoDB/dao"
@@ -96,7 +98,7 @@ func DeleteUserEndPoint(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, http.StatusOK, "User deleted successfully", "")
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
+func LoginEndPoint(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
@@ -111,6 +113,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	token, _ := auth.GenerateJWT(user)
 	w.Header().Set("Token", token)
 	respondWithJson(w, http.StatusOK, "Login Success!", user)
+}
+
+func LogoutEndPoint(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("_id", "")
+	w.Header().Set("email", "")
+	w.Header().Set("firstname", "")
+	w.Header().Set("lastname", "")
+	respondWithJson(w, http.StatusOK, "Logout Success!", nil)
 }
 
 func respondWithError(w http.ResponseWriter, code int, msg string) {
@@ -151,7 +161,8 @@ func commonMiddleware(next http.Handler) http.Handler {
 // Define HTTP request routes
 func main() {
 	routes := mux.NewRouter()
-
+	godotenv.Load()
+	
 	routes.Use(loggingMiddleware)
 	routes.Use(commonMiddleware)
 
@@ -164,8 +175,10 @@ func main() {
 	routes.Handle("/api/users/{id}", auth.IsAuthorized(UpdateUserEndPoint)).Methods("PUT")
 	routes.Handle("/api/users", auth.IsAuthorized(DeleteUserEndPoint)).Methods("DELETE")
 	routes.Handle("/api/users/{id}", auth.IsAuthorized(FindUserEndpoint)).Methods("GET")
-	routes.Handle("/api/auth/login", auth.IsAuthorized(Login)).Methods("POST")
+	routes.Handle("/api/auth/login", auth.IsAuthorized(LoginEndPoint)).Methods("POST")
+	routes.Handle("/api/auth/logout", auth.IsAuthorized(LogoutEndPoint)).Methods("GET")
 	routes.Handle("/", auth.IsAuthorized(homePage)).Methods("GET")
-	fmt.Println("Server Is Running At 8080")
-	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(headersOk, originsOk, methodsOk)(routes)))
+
+	fmt.Println("Server Is Running At ", os.Getenv("PORT"))
+	log.Fatal(http.ListenAndServe(":" + os.Getenv("PORT"), handlers.CORS(headersOk, originsOk, methodsOk)(routes)))
 }
