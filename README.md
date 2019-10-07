@@ -23,16 +23,16 @@ go get github.com/gorilla/mux gopkg.in/mgo.v2 github.com/BurntSushi/toml
 
 ### What's included
 
-Basic CRUD routes for user management
+Basic CRUD routes for user management <br/>
 
-Show Users GET      /api/users
-Show User GET       /api/users/{userId}
-Create User POST    /api/users/register
-Update User PUT     /api/users/{userId}
-Delete User DELETE  /api/users/{userId}
+Show Users GET      /api/users <br />
+Show User GET       /api/users/{userId} <br /> 
+Create User POST    /api/users/register <br />
+Update User PUT     /api/users/{userId} <br />
+Delete User DELETE  /api/users/{userId} <br />
 
-User Login POST     /api/auth/login
-User Logout GET     /api/auth/logout
+User Login POST     /api/auth/login <br />
+User Logout GET     /api/auth/logout <br />
 
 Several routes are protected and require JWT tokens, which can be generated using the login route. You will need to create a user by sending a post request to the createUser route.
 
@@ -49,7 +49,7 @@ $ go run *.go
 
 ## Todos
 
-[] Implements Swagger on the top of middleware.
-[] Implements Mail service while creating users.
-[] Making the code more enhensive and moduler.
-[] Implements redisDB for session management.
+[] Implements Swagger for API crud. <br />
+[] Implements Mail service while creating users. <br />
+[] Making the code more enhensive and moduler. <br />
+[] Implements redisDB for session management. <br />
