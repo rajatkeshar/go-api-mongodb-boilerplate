@@ -25,14 +25,14 @@ go get github.com/gorilla/mux gopkg.in/mgo.v2 github.com/BurntSushi/toml
 
 Basic CRUD routes for user management
 
-Show Users GET      /api/users
-Show User GET       /api/users/{userId}
-Create User POST    /api/users/register
-Update User PUT     /api/users/{userId}
-Delete User DELETE  /api/users/{userId}
+Show Users GET      /api/users 
+Show User GET       /api/users/{userId} 
+Create User POST    /api/users/register 
+Update User PUT     /api/users/{userId} 
+Delete User DELETE  /api/users/{userId} 
 
-User Login POST     /api/auth/login
-User Logout GET     /api/auth/logout
+User Login POST     /api/auth/login 
+User Logout GET     /api/auth/logout 
 
 Several routes are protected and require JWT tokens, which can be generated using the login route. You will need to create a user by sending a post request to the createUser route.
 
