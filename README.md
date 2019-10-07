@@ -49,7 +49,7 @@ $ go run *.go
 
 ## Todos
 
-[] Implements Swagger on the top of middleware. <br />
+[] Implements Swagger for API crud. <br />
 [] Implements Mail service while creating users. <br />
 [] Making the code more enhensive and moduler. <br />
 [] Implements redisDB for session management. <br />
