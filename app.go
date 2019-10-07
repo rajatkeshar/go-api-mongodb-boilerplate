@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"github.com/joho/godotenv"
 	"github.com/gorilla/handlers"
-	. "github.com/GORest-API-MongoDB/dao"
-	. "github.com/GORest-API-MongoDB/config"
+	. "github.com/GoRest-API-MongoDB-Boilerplate/dao"
+	. "github.com/GoRest-API-MongoDB-Boilerplate/config"
 )
 
 var config = Config{}

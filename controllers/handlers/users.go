@@ -7,9 +7,9 @@ import (
         "gopkg.in/mgo.v2/bson"
         "github.com/gorilla/mux"
         "golang.org/x/crypto/bcrypt"
-        . "github.com/GORest-API-MongoDB/dao"
-        "github.com/GORest-API-MongoDB/models"
-        "github.com/GORest-API-MongoDB/lib/responseHandler"
+        . "github.com/GoRest-API-MongoDB-Boilerplate/dao"
+        "github.com/GoRest-API-MongoDB-Boilerplate/models"
+        "github.com/GoRest-API-MongoDB-Boilerplate/lib/responseHandler"
 )
 
 var dao = UsersDAO{}

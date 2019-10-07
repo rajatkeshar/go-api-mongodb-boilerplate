@@ -5,9 +5,9 @@ import (
     "net/http"
     "github.com/gorilla/mux"
 	//"github.com/bitly/go-simplejson"
-    "github.com/GORest-API-MongoDB/models"
-    "github.com/GORest-API-MongoDB/lib/auth"
-    "github.com/GORest-API-MongoDB/controllers/api"
+    "github.com/GoRest-API-MongoDB-Boilerplate/models"
+    "github.com/GoRest-API-MongoDB-Boilerplate/lib/auth"
+    "github.com/GoRest-API-MongoDB-Boilerplate/controllers/api"
 )
 
 //Home Page

@@ -1,8 +1,8 @@
 package api
 
 import (
-    "github.com/GORest-API-MongoDB/models"
-    "github.com/GORest-API-MongoDB/controllers/handlers"
+    "github.com/GoRest-API-MongoDB-Boilerplate/models"
+    "github.com/GoRest-API-MongoDB-Boilerplate/controllers/handlers"
 )
 
 var UsersRoutes = models.RoutePrefix{

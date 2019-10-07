@@ -1,4 +1,4 @@
-# GoLang, Mux, MongoDB, JWT Restful API Boilerplate
+# GoLang Restful API Boilerplate (Mux, JWT, MongoDB)  
 
 This repository contains the web app to learn Go REST API development using Mux(Router), JSON Web Token (JWT), and MongoDB.
 
@@ -43,7 +43,7 @@ Database configuration will be done in config.toml file and rest of the configur
 ### To get this repository and run
 
  ```sh
-$ git clone https://github.com/rajatkeshar/go-rest-api-jwt-mongo-boilerplate.git
+$ git clone https://github.com/rajatkeshar/GoRest-API-MongoDB-Boilerplate.git
 $ go run *.go
 ```
 
