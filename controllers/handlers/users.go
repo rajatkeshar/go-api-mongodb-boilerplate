@@ -9,6 +9,7 @@ import (
         "golang.org/x/crypto/bcrypt"
         . "github.com/GORest-API-MongoDB/dao"
         "github.com/GORest-API-MongoDB/models"
+        "github.com/GORest-API-MongoDB/lib/responseHandler"
 )
 
 var dao = UsersDAO{}
@@ -17,10 +18,10 @@ var dao = UsersDAO{}
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := dao.FindAll()
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		response.Json(w, http.StatusInternalServerError, err.Error(), false)
 		return
 	}
-	respondWithJson(w, http.StatusOK, "Users Data", users)
+	response.Json(w, http.StatusOK, "Users Data", users)
 }
 
 // GET a users by its ID
@@ -28,10 +29,10 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	user, err := dao.FindById(params["id"])
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
+		response.Json(w, http.StatusBadRequest, "Invalid user ID", false)
 		return
 	}
-	respondWithJson(w, http.StatusOK, "User data", user)
+	response.Json(w, http.StatusOK, "User data", user)
 }
 
 // POST a new user
@@ -39,13 +40,13 @@ func RegisterNewUser(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		response.Json(w, http.StatusBadRequest, "Invalid request payload", false)
 		return
 	}
 
 	res, _ := dao.FindByEmailId(user.Email, user.Username)
 	if res.Email != "" {
-		respondWithError(w, http.StatusBadRequest, "User Already Exists!")
+		response.Json(w, http.StatusBadRequest, "User Already Exists!", false)
 		return
 	}
 
@@ -53,10 +54,10 @@ func RegisterNewUser(w http.ResponseWriter, r *http.Request) {
 	hash, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 5)
 	user.Password = string(hash)
 	if err := dao.Insert(user); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		response.Json(w, http.StatusInternalServerError, err.Error(), false)
 		return
 	}
-	respondWithJson(w, http.StatusCreated, "User created successfully", user)
+	response.Json(w, http.StatusCreated, "User created successfully", user)
 }
 
 // PUT update an existing user
@@ -66,14 +67,14 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	user.ID = bson.ObjectIdHex(params["id"])
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		response.Json(w, http.StatusBadRequest, "Invalid request payload", false)
 		return
 	}
 	if err := dao.Update(user); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		response.Json(w, http.StatusInternalServerError, err.Error(), false)
 		return
 	}
-	respondWithJson(w, http.StatusOK, "User detail updated successfully", "")
+	response.Json(w, http.StatusOK, "User detail updated successfully", nil)
 }
 
 // DELETE an existing user
@@ -81,22 +82,12 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		response.Json(w, http.StatusBadRequest, "Invalid request payload", false)
 		return
 	}
 	if err := dao.Delete(user); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		response.Json(w, http.StatusInternalServerError, err.Error(), false)
 		return
 	}
-	respondWithJson(w, http.StatusOK, "User deleted successfully", "")
-}
-
-func respondWithError(w http.ResponseWriter, code int, msg string) {
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(bson.M{"code": code, "success": false, "msg": msg, "data": nil})
-}
-
-func respondWithJson(w http.ResponseWriter, code int, msg string, payload interface{}) {
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(bson.M{"code": code, "success": true, "msg": msg, "data": payload})
+	response.Json(w, http.StatusOK, "User deleted successfully", nil)
 }
