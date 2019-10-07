@@ -1,7 +1,7 @@
 package auth
 
 import (
-  "fmt"
+  "log"
   "time"
   "net/http"
   "encoding/json"
@@ -38,7 +38,7 @@ func GenerateJWT(user models.User) (string, error) {
     tokenString, err := token.SignedString([]byte(mySigningKey))
 
     if err != nil {
-        fmt.Println("Something Went Wrong: %s", err.Error())
+        log.Println("Something Went Wrong: %s", err.Error())
         return "", err
     }
 
