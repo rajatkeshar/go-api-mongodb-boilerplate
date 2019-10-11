@@ -5,6 +5,8 @@ import (
     "net/http"
     "github.com/gorilla/mux"
 	//"github.com/bitly/go-simplejson"
+    "github.com/swaggo/http-swagger"
+    _ "github.com/GoRest-API-MongoDB-Boilerplate/docs"
     "github.com/GoRest-API-MongoDB-Boilerplate/models"
     "github.com/GoRest-API-MongoDB-Boilerplate/lib/auth"
     "github.com/GoRest-API-MongoDB-Boilerplate/controllers/api"
@@ -30,6 +32,10 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 func commonMiddleware(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        if r.URL.Path == "/swagger/index.html" || r.URL.Path == "/swagger/swagger-ui.css" || r.URL.Path == "/swagger/swagger-ui-bundle.js" || r.URL.Path == "/swagger/swagger-ui-standalone-preset.js" || r.URL.Path == "/swagger/doc.json" || r.URL.Path == "/swagger/favicon-32x32.png" {
+            next.ServeHTTP(w, r)
+            return
+        }
         w.Header().Set("Content-Type", "application/json")
         next.ServeHTTP(w, r)
     })
@@ -41,6 +47,10 @@ func RoutesLoader() *mux.Router {
     routes.Use(loggingMiddleware)
 	routes.Use(commonMiddleware)
 	// routes.Handle("/", auth.IsAuthorized(homePage)).Methods("GET")
+
+    routes.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
+		httpSwagger.URL("http://localhost:8080/swagger/doc.json"), //The url pointing to API definition"
+	))
 
     //append applications routes
     models.Routes = append(models.Routes, api.AuthRoutes)
