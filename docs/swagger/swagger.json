@@ -1,0 +1,362 @@
+{
+	"openapi": "3.0.0",
+	"servers": [
+		{
+			"description": "GoLang-Boilerplate",
+			"url": "http://127.0.0.1:8080/api"
+		}
+	],
+	"info": {
+		"version": "1.0.0",
+		"title": "GoLang-Boilerplate Server API",
+		"description": "This Is GoLang-Boilerplate Server",
+		"contact": {
+			"description": "API Support",
+			"name": "Rajat Kesharwani",
+			"email": "rajat.sunny2@gmail.com"
+		},
+		"license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+	},
+	"host": "127.0.0.1:8080",
+	"basePath": "/api/",
+	"schemes": [
+		"http",
+		"https"
+	],
+	"tags": [
+		{
+			"name": "Auth Controller",
+			"description": "Contains Auth API"
+		},
+		{
+			"name": "Users Controller",
+			"description": "Contains Users API"
+		}
+	],
+	"paths": {
+		"/auth/login": {
+			"post": {
+				"tags": [
+					"Auth Controller"
+				],
+				"description": "Users Login",
+				"summary": "This API use to login on application",
+				"operationId": "login",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "Users Login",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"email": {"type": "string", "required": true},
+									"password": {"type": "string", "required": true}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"items": {
+										"$ref": "#/definitions/SuccessResponse"
+									}
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"items": {
+										"$ref": "#/definitions/ErrorResponse"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/logout": {
+			"get": {
+				"tags": [
+					"Auth Controller"
+				],
+				"description": "Users Logout",
+				"summary": "This API is used to logout from application",
+				"operationId": "logout",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"items": {
+										"$ref": "#/definitions/SuccessResponse"
+									}
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"items": {
+										"$ref": "#/definitions/ErrorResponse"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users": {
+			"get": {
+				"tags": [
+					"Users Controller"
+				],
+				"description": "Get Users",
+				"summary": "This API use to get users",
+				"operationId": "getUsers",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"items": {
+										"$ref": "#/definitions/SuccessResponse"
+									}
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"items": {
+										"$ref": "#/definitions/ErrorResponse"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/{id}": {
+			"get": {
+				"tags": [
+					"Users Controller"
+				],
+				"description": "Get User By Id",
+				"summary": "This API use to get user by id",
+				"operationId": "getUserById",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "params",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"example": "5d933488b225ec02a5ebc316"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"items": {
+										"$ref": "#/definitions/SuccessResponse"
+									}
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"items": {
+										"$ref": "#/definitions/ErrorResponse"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"detete": {
+				"tags": [
+					"Users Controller"
+				],
+				"description": "Delete User By Id",
+				"summary": "This API use to delete user by id",
+				"operationId": "deleteUserById",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+					{
+						"in": "params",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"example": "5d933488b225ec02a5ebc316"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"items": {
+										"$ref": "#/definitions/SuccessResponse"
+									}
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"items": {
+										"$ref": "#/definitions/ErrorResponse"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/register": {
+			"post": {
+				"tags": [
+					"Users Controller"
+				],
+				"description": "Register New User",
+				"summary": "This API use to create new user",
+				"operationId": "registerUser",
+				"produces": [
+					"application/json"
+				],
+				"requestBody": {
+					"description": "Register New Users",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"firstname": {"type": "string", "required": true},
+									"lastname": {"type": "string", "required": true},
+									"username": {"type": "string", "required": true},
+									"age": {"type": "number", "required": true},
+									"email": {"type": "string", "required": true},
+									"password": {"type": "string", "required": true}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"items": {
+										"$ref": "#/definitions/SuccessResponse"
+									}
+								}
+							}
+						}
+					},
+					"default": {
+						"description": "Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"items": {
+										"$ref": "#/definitions/ErrorResponse"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"definitions": {
+	    "SuccessResponse": {
+	      "type": "object",
+	      "properties": {
+	        "success": {
+	          "type": "object",
+			  "description": true
+	        }
+	      }
+	  	},
+		"ErrorResponse": {
+	      "type": "object",
+	      "properties": {
+	        "success": {
+	          "type": "object",
+			  "description": false
+	        }
+	      }
+	    }
+	}
+}

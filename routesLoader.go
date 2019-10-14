@@ -2,6 +2,7 @@ package main
 
 import (
     "log"
+    "regexp"
     "net/http"
     "github.com/gorilla/mux"
 	//"github.com/bitly/go-simplejson"
@@ -32,7 +33,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 
 func commonMiddleware(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        if r.URL.Path == "/swagger/index.html" || r.URL.Path == "/swagger/swagger-ui.css" || r.URL.Path == "/swagger/swagger-ui-bundle.js" || r.URL.Path == "/swagger/swagger-ui-standalone-preset.js" || r.URL.Path == "/swagger/doc.json" || r.URL.Path == "/swagger/favicon-32x32.png" {
+        if match, _ := regexp.MatchString("/swagger/*", r.URL.Path); match {
             next.ServeHTTP(w, r)
             return
         }
