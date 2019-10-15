@@ -1,6 +1,7 @@
 package handlers
 
 import (
+        "os"
         //"log"
         "net/http"
         "strings"
@@ -10,6 +11,7 @@ import (
         "golang.org/x/crypto/bcrypt"
         . "github.com/GoRest-API-MongoDB-Boilerplate/dao"
         "github.com/GoRest-API-MongoDB-Boilerplate/models"
+        "github.com/GoRest-API-MongoDB-Boilerplate/lib/auth"
         "github.com/GoRest-API-MongoDB-Boilerplate/lib/mailer"
         "github.com/GoRest-API-MongoDB-Boilerplate/lib/responseHandler"
 )
@@ -59,9 +61,11 @@ func RegisterNewUser(w http.ResponseWriter, r *http.Request) {
 		response.Json(w, http.StatusInternalServerError, err.Error(), false)
 		return
 	}
+    token, _ := auth.GenerateJWT(user)
+    URL := "http://" + os.Getenv("HOST") + ":" + os.Getenv("PORT") + "/api/auth/verify/" + token
     user.Password = ""
-    go mailer.SendMail(user.Email, "GoRest-API-MongoDB-Boilerplate", "Hi " + strings.Title(strings.ToLower(user.Firstname)) + "\nRegistration Successful \n" + "Your email: " + user.Email + " registered with us. ")
-    response.Json(w, http.StatusCreated, "User created successfully", user)
+    go mailer.SendMail(user.Email, "Verify Email - GoRest-API-MongoDB-Boilerplate", "Hi " + strings.Title(strings.ToLower(user.Firstname)) + "\nRegistration Successful \n" + "Please Verify Your email: " + URL)
+    response.Json(w, http.StatusCreated, "User Registration Success, Please Confirm Email", user)
 }
 
 // PUT update an existing user

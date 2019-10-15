@@ -22,5 +22,12 @@ var AuthRoutes = models.RoutePrefix{
 			handlers.UsersLogout,
 			false,
 		},
+        models.Route{
+			"UsersVerify",
+			"GET",
+			"/verify/{token}",
+			handlers.UsersVerify,
+			false,
+		},
 	},
 }

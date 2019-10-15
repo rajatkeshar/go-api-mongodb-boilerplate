@@ -79,3 +79,19 @@ func IsAuthorized(endpoint func(http.ResponseWriter, *http.Request)) http.Handle
         }
     })
 }
+
+func VerifyToken(w http.ResponseWriter, token1 string) error {
+    var usersClaim UsersClaim
+    token, err := jwt.ParseWithClaims(token1, &usersClaim, func(token *jwt.Token) (interface{}, error) {
+        return []byte(mySigningKey), nil
+    })
+
+    if token.Valid {
+        w.Header().Set("_id", usersClaim.ID.Hex())
+        w.Header().Set("email", usersClaim.Email)
+        w.Header().Set("firstname", usersClaim.Firstname)
+        w.Header().Set("lastname", usersClaim.Lastname)
+        return nil
+    }
+    return err
+}

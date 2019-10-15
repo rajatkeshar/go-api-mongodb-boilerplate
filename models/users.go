@@ -12,4 +12,5 @@ type User struct {
 	Email string `bson:"email" json:"email"`
 	Username string `bson:"username" json:"username"`
 	Password string `bson:"password,omitempty" json:"password,omitempty"`
+	Verify bool `bson:"verify" json:"verify" default:"false"`
 }
