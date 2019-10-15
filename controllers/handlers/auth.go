@@ -30,7 +30,7 @@ func UsersLogin(w http.ResponseWriter, r *http.Request) {
 		response.Json(w, http.StatusBadRequest, "Invalid password!", false)
 		return
 	}
-
+    user.Password = ""
 	token, _ := auth.GenerateJWT(user)
 	w.Header().Set("Token", token)
 	response.Json(w, http.StatusOK, "Login Success!", user)
