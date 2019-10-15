@@ -1,8 +1,8 @@
 package api
 
 import (
-    "github.com/GoRest-API-MongoDB-Boilerplate/models"
-    "github.com/GoRest-API-MongoDB-Boilerplate/controllers/handlers"
+    "github.com/go-api-mongodb-boilerplate/models"
+    "github.com/go-api-mongodb-boilerplate/controllers/handlers"
 )
 
 var AuthRoutes = models.RoutePrefix{

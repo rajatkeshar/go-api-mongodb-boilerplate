@@ -6,10 +6,10 @@ import (
     "encoding/json"
     "github.com/gorilla/mux"
     "golang.org/x/crypto/bcrypt"
-    //. "github.com/GoRest-API-MongoDB-Boilerplate/dao"
-    "github.com/GoRest-API-MongoDB-Boilerplate/models"
-    "github.com/GoRest-API-MongoDB-Boilerplate/lib/auth"
-    "github.com/GoRest-API-MongoDB-Boilerplate/lib/responseHandler"
+    //. "github.com/go-api-mongodb-boilerplate/dao"
+    "github.com/go-api-mongodb-boilerplate/models"
+    "github.com/go-api-mongodb-boilerplate/lib/auth"
+    "github.com/go-api-mongodb-boilerplate/lib/responseHandler"
 )
 
 //var dao = UsersDAO{}

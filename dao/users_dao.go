@@ -4,7 +4,7 @@ import (
 	"log"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"github.com/GoRest-API-MongoDB-Boilerplate/models"
+	"github.com/go-api-mongodb-boilerplate/models"
 )
 
 type UsersDAO struct {

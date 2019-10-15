@@ -6,7 +6,7 @@ import (
   "net/http"
   "encoding/json"
 	jwt "github.com/dgrijalva/jwt-go"
-  "github.com/GoRest-API-MongoDB-Boilerplate/models"
+  "github.com/go-api-mongodb-boilerplate/models"
 )
 
 const (

@@ -43,7 +43,7 @@ Database configuration will be done in config.toml file and rest of the configur
 ### To get this repository and run
 
  ```sh
-$ git clone https://github.com/rajatkeshar/GoRest-API-MongoDB-Boilerplate.git
+$ git clone https://github.com/rajatkeshar/go-api-mongodb-boilerplate.git
 $ go run *.go
 ```
 

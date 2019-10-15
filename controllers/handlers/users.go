@@ -9,11 +9,11 @@ import (
         "gopkg.in/mgo.v2/bson"
         "github.com/gorilla/mux"
         "golang.org/x/crypto/bcrypt"
-        . "github.com/GoRest-API-MongoDB-Boilerplate/dao"
-        "github.com/GoRest-API-MongoDB-Boilerplate/models"
-        "github.com/GoRest-API-MongoDB-Boilerplate/lib/auth"
-        "github.com/GoRest-API-MongoDB-Boilerplate/lib/mailer"
-        "github.com/GoRest-API-MongoDB-Boilerplate/lib/responseHandler"
+        . "github.com/go-api-mongodb-boilerplate/dao"
+        "github.com/go-api-mongodb-boilerplate/models"
+        "github.com/go-api-mongodb-boilerplate/lib/auth"
+        "github.com/go-api-mongodb-boilerplate/lib/mailer"
+        "github.com/go-api-mongodb-boilerplate/lib/responseHandler"
 )
 
 var dao = UsersDAO{}
@@ -64,7 +64,7 @@ func RegisterNewUser(w http.ResponseWriter, r *http.Request) {
     token, _ := auth.GenerateJWT(user)
     URL := "http://" + os.Getenv("HOST") + ":" + os.Getenv("PORT") + "/api/auth/verify/" + token
     user.Password = ""
-    go mailer.SendMail(user.Email, "Verify Email - GoRest-API-MongoDB-Boilerplate", "Hi " + strings.Title(strings.ToLower(user.Firstname)) + "\nRegistration Successful \n" + "Please Verify Your email: " + URL)
+    go mailer.SendMail(user.Email, "Verify Email - go-api-mongodb-boilerplate", "Hi " + strings.Title(strings.ToLower(user.Firstname)) + "\nRegistration Successful \n" + "Please Verify Your email: " + URL)
     response.Json(w, http.StatusCreated, "User Registration Success, Please Confirm Email", user)
 }
 

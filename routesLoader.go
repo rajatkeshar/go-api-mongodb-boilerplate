@@ -7,10 +7,10 @@ import (
     "github.com/gorilla/mux"
 	//"github.com/bitly/go-simplejson"
     "github.com/swaggo/http-swagger"
-    _ "github.com/GoRest-API-MongoDB-Boilerplate/docs"
-    "github.com/GoRest-API-MongoDB-Boilerplate/models"
-    "github.com/GoRest-API-MongoDB-Boilerplate/lib/auth"
-    "github.com/GoRest-API-MongoDB-Boilerplate/controllers/api"
+    _ "github.com/go-api-mongodb-boilerplate/docs"
+    "github.com/go-api-mongodb-boilerplate/models"
+    "github.com/go-api-mongodb-boilerplate/lib/auth"
+    "github.com/go-api-mongodb-boilerplate/controllers/api"
 )
 
 //Home Page
