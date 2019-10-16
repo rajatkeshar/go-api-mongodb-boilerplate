@@ -6,7 +6,7 @@ import (
     "encoding/json"
     "github.com/gorilla/mux"
     "golang.org/x/crypto/bcrypt"
-    //. "github.com/go-api-mongodb-boilerplate/dao"
+    "github.com/go-api-mongodb-boilerplate/dao"
     "github.com/go-api-mongodb-boilerplate/models"
     "github.com/go-api-mongodb-boilerplate/lib/auth"
     "github.com/go-api-mongodb-boilerplate/lib/responseHandler"

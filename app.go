@@ -6,18 +6,10 @@ import (
 	"net/http"
 	"github.com/joho/godotenv"
 	"github.com/gorilla/handlers"
-	. "github.com/go-api-mongodb-boilerplate/dao"
-	. "github.com/go-api-mongodb-boilerplate/config"
+	"github.com/go-api-mongodb-boilerplate/dao"
 )
 
-var config = Config{}
-var dao = UsersDAO{}
-
-// Parse the configuration file 'config.toml', and establish a connection to DB
 func init() {
-	config.Read()
-	dao.Server = config.Server
-	dao.Database = config.Database
 	dao.Connect()
 	dao.PopulateIndex()
 }

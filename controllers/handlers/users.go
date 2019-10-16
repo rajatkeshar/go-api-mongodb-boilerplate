@@ -9,14 +9,14 @@ import (
         "gopkg.in/mgo.v2/bson"
         "github.com/gorilla/mux"
         "golang.org/x/crypto/bcrypt"
-        . "github.com/go-api-mongodb-boilerplate/dao"
+        "github.com/go-api-mongodb-boilerplate/dao"
         "github.com/go-api-mongodb-boilerplate/models"
         "github.com/go-api-mongodb-boilerplate/lib/auth"
         "github.com/go-api-mongodb-boilerplate/lib/mailer"
         "github.com/go-api-mongodb-boilerplate/lib/responseHandler"
 )
 
-var dao = UsersDAO{}
+// var dao = UsersDAO{}
 
 // GET list of users
 func GetUsers(w http.ResponseWriter, r *http.Request) {

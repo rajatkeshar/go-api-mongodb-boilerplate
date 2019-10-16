@@ -4,11 +4,9 @@ import (
     "os"
 	"log"
 	"net/smtp"
-    "github.com/joho/godotenv"
 )
 
 func SendMail(to string, subject string, body string) {
-    godotenv.Load()
 	from := os.Getenv("EMAIL")
 	pass := os.Getenv("PASSWORD")
 
