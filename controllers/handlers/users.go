@@ -16,8 +16,6 @@ import (
         "github.com/go-api-mongodb-boilerplate/lib/responseHandler"
 )
 
-// var dao = UsersDAO{}
-
 // GET list of users
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := dao.FindAll()

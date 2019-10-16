@@ -12,8 +12,6 @@ import (
     "github.com/go-api-mongodb-boilerplate/lib/responseHandler"
 )
 
-//var dao = UsersDAO{}
-
 func UsersLogin(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {

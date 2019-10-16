@@ -7,6 +7,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/gorilla/handlers"
 	"github.com/go-api-mongodb-boilerplate/dao"
+	"github.com/go-api-mongodb-boilerplate/router"
 )
 
 func init() {
@@ -16,8 +17,8 @@ func init() {
 
 // Define HTTP request routes
 func main() {
-	routes := RoutesLoader()
 	godotenv.Load()
+	routes := router.NewRouter()
 
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})

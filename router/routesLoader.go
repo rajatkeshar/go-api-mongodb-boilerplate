@@ -1,11 +1,11 @@
-package main
+package router
 
 import (
+    "os"
     "log"
     "regexp"
     "net/http"
     "github.com/gorilla/mux"
-	//"github.com/bitly/go-simplejson"
     "github.com/swaggo/http-swagger"
     _ "github.com/go-api-mongodb-boilerplate/docs"
     "github.com/go-api-mongodb-boilerplate/models"
@@ -13,18 +13,8 @@ import (
     "github.com/go-api-mongodb-boilerplate/controllers/api"
 )
 
-//Home Page
-// func homePage(w http.ResponseWriter, r *http.Request) {
-// 		jsonBuilder := simplejson.New()
-// 		jsonBuilder.Set("_id", w.Header().Get("_id"))
-// 		jsonBuilder.Set("firstname", w.Header().Get("firstname"))
-// 		jsonBuilder.Set("lastname", w.Header().Get("lastname"))
-// 		respondWithJson(w, http.StatusOK, "Home Page!", jsonBuilder)
-// }
-
 func loggingMiddleware(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        // Do stuff here
         log.Println(r.RequestURI)
         // Call the next handler, which can be another middleware in the chain, or the final handler.
         next.ServeHTTP(w, r)
@@ -42,15 +32,14 @@ func commonMiddleware(next http.Handler) http.Handler {
     })
 }
 
-func RoutesLoader() *mux.Router {
+func NewRouter() *mux.Router {
     routes := mux.NewRouter()
 
     routes.Use(loggingMiddleware)
 	routes.Use(commonMiddleware)
-	// routes.Handle("/", auth.IsAuthorized(homePage)).Methods("GET")
 
     routes.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
-		httpSwagger.URL("http://localhost:8080/swagger/doc.json"), //The url pointing to API definition"
+		httpSwagger.URL("http://" + os.Getenv("HOST") + ":" + os.Getenv("PORT") + "/swagger/doc.json"), //The url pointing to API definition"
 	))
 
     //append applications routes
