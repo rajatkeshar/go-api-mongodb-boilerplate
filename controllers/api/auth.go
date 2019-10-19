@@ -29,5 +29,19 @@ var AuthRoutes = models.RoutePrefix{
 			handlers.UsersVerify,
 			false,
 		},
+        models.Route{
+			"UsersForgotPassword",
+			"POST",
+			"/forgot",
+			handlers.UsersForgotPassword,
+			false,
+		},
+        models.Route{
+			"UsersVerifyForgotPassword",
+			"POST",
+			"/verify/forgot/password/{token}",
+			handlers.UsersVerifyForgotPassword,
+			false,
+		},
 	},
 }
