@@ -43,5 +43,12 @@ var UsersRoutes = models.RoutePrefix{
 			handlers.UpdateUser,
 			true,
 		},
+        models.Route{
+			"UploadProfileForUser",
+			"PUT",
+			"/upload/{userId}",
+			handlers.UploadProfileForUser,
+			true,
+		},
 	},
 }
